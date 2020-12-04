@@ -1,4 +1,5 @@
 using System;
+using Geisha.Engine.Windows;
 
 namespace ShinobiDojo
 {
@@ -10,6 +11,7 @@ namespace ShinobiDojo
         [STAThread]
         private static void Main()
         {
+            GeishaEngineForWindows.Run(new ShinobiDojoGame());
         }
     }
 }
