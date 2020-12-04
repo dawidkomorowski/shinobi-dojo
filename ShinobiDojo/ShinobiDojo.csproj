@@ -6,4 +6,10 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Geisha.Common" Version="0.5.0" />
+    <PackageReference Include="Geisha.Engine" Version="0.5.0" />
+    <PackageReference Include="Geisha.Engine.Windows" Version="0.5.0" />
+  </ItemGroup>
+
 </Project>
