@@ -1,4 +1,5 @@
 ﻿using Geisha.Engine.Core.SceneModel;
+using ShinobiDojo.Character;
 
 namespace ShinobiDojo
 {

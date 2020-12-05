@@ -1,9 +1,10 @@
 ﻿using Geisha.Common.Math;
 using Geisha.Engine.Core.Components;
 using Geisha.Engine.Core.SceneModel;
+using Geisha.Engine.Input.Components;
 using Geisha.Engine.Rendering.Components;
 
-namespace ShinobiDojo
+namespace ShinobiDojo.Character
 {
     internal sealed class CharacterEntityFactory
     {
@@ -18,6 +19,8 @@ namespace ShinobiDojo
                 Dimension = new Vector2(128, 256),
                 FillInterior = true
             });
+            characterEntity.AddComponent(new InputComponent());
+            characterEntity.AddComponent(new PlayerCharacterControllerComponent());
 
             return characterEntity;
         }
