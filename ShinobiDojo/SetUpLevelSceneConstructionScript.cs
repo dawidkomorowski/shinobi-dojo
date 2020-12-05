@@ -13,6 +13,10 @@ namespace ShinobiDojo
             var groundEntityFactory = new GroundEntityFactory();
             var groundEntity = groundEntityFactory.CreateGround();
             scene.AddEntity(groundEntity);
+
+            var characterEntityFactory = new CharacterEntityFactory();
+            var characterEntity = characterEntityFactory.CreateCharacter();
+            scene.AddEntity(characterEntity);
         }
 
         public string Name => "SetUpLevel";
