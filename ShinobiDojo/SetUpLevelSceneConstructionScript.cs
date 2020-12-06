@@ -16,7 +16,7 @@ namespace ShinobiDojo
             scene.AddEntity(groundEntity);
 
             var characterEntityFactory = new CharacterEntityFactory();
-            var characterEntity = characterEntityFactory.CreateCharacter();
+            var characterEntity = characterEntityFactory.CreatePlayerCharacter();
             scene.AddEntity(characterEntity);
         }
 

@@ -8,7 +8,17 @@ namespace ShinobiDojo.Character
 {
     internal sealed class CharacterEntityFactory
     {
-        public Entity CreateCharacter()
+        public Entity CreatePlayerCharacter()
+        {
+            var characterEntity = CreateCharacter();
+
+            characterEntity.AddComponent(new InputComponent());
+            characterEntity.AddComponent(new PlayerCharacterControllerComponent());
+
+            return characterEntity;
+        }
+
+        private Entity CreateCharacter()
         {
             var characterEntity = new Entity();
 
@@ -21,8 +31,6 @@ namespace ShinobiDojo.Character
             });
             characterEntity.AddComponent(new CharacterPhysicsComponent());
             characterEntity.AddComponent(new CharacterControllerComponent());
-            characterEntity.AddComponent(new InputComponent());
-            characterEntity.AddComponent(new PlayerCharacterControllerComponent());
 
             return characterEntity;
         }
