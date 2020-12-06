@@ -2,6 +2,7 @@
   "Core": {
     "AssetsRootDirectoryPath": "Assets",
     "CustomSystemsExecutionOrder": [
+      "ShinobiDojo.CharacterControllerSystem",
       "ShinobiDojo.CharacterPhysicsSystem"
     ],
     "FixedUpdatesPerFrameLimit": 30,

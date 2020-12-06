@@ -9,6 +9,7 @@ namespace ShinobiDojo
         public void RegisterComponents(IComponentsRegistry componentsRegistry)
         {
             // Character
+            componentsRegistry.RegisterSystem<CharacterControllerSystem>();
             componentsRegistry.RegisterSystem<CharacterPhysicsSystem>();
 
             componentsRegistry.RegisterSceneConstructionScript<SetUpLevelSceneConstructionScript>();

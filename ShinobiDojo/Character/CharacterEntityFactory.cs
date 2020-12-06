@@ -20,6 +20,7 @@ namespace ShinobiDojo.Character
                 FillInterior = true
             });
             characterEntity.AddComponent(new CharacterPhysicsComponent());
+            characterEntity.AddComponent(new CharacterControllerComponent());
             characterEntity.AddComponent(new InputComponent());
             characterEntity.AddComponent(new PlayerCharacterControllerComponent());
 
