@@ -19,6 +19,7 @@ namespace ShinobiDojo.Character
                 Dimension = new Vector2(128, 256),
                 FillInterior = true
             });
+            characterEntity.AddComponent(new CharacterPhysicsComponent());
             characterEntity.AddComponent(new InputComponent());
             characterEntity.AddComponent(new PlayerCharacterControllerComponent());
 

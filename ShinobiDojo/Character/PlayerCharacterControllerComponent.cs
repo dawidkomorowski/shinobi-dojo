@@ -8,26 +8,28 @@ namespace ShinobiDojo.Character
     internal sealed class PlayerCharacterControllerComponent : BehaviorComponent
     {
         private InputComponent _inputComponent = null!;
-        private Transform2DComponent _transform2DComponent = null!;
+        private CharacterPhysicsComponent _characterPhysicsComponent = null!;
 
         public override void OnStart()
         {
             Debug.Assert(Entity != null, nameof(Entity) + " != null");
 
             _inputComponent = Entity.GetComponent<InputComponent>();
-            _transform2DComponent = Entity.GetComponent<Transform2DComponent>();
+            _characterPhysicsComponent = Entity.GetComponent<CharacterPhysicsComponent>();
         }
 
         public override void OnFixedUpdate()
         {
+            _characterPhysicsComponent.Velocity = new Vector2(0, 0);
+
             if (_inputComponent.HardwareInput.KeyboardInput.Left)
             {
-                _transform2DComponent.Translation += new Vector2(-5, 0);
+                _characterPhysicsComponent.Velocity = new Vector2(-100, 0);
             }
 
             if (_inputComponent.HardwareInput.KeyboardInput.Right)
             {
-                _transform2DComponent.Translation += new Vector2(5, 0);
+                _characterPhysicsComponent.Velocity = new Vector2(100, 0);
             }
         }
     }
