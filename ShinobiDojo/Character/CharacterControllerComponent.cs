@@ -1,5 +1,4 @@
-﻿using Geisha.Common.Math;
-using Geisha.Engine.Core.SceneModel;
+﻿using Geisha.Engine.Core.SceneModel;
 
 namespace ShinobiDojo.Character
 {
@@ -22,16 +21,17 @@ namespace ShinobiDojo.Character
 
         internal void Process(CharacterPhysicsComponent characterPhysicsComponent)
         {
-            characterPhysicsComponent.Velocity = new Vector2(0, 0);
+            var initialVelocity = characterPhysicsComponent.Velocity;
+            characterPhysicsComponent.Velocity = initialVelocity.WithX(0);
 
             if (_isWalkLeft)
             {
-                characterPhysicsComponent.Velocity = new Vector2(-WalkSpeed, 0);
+                characterPhysicsComponent.Velocity = initialVelocity.WithX(-WalkSpeed);
             }
 
             if (_isWalkRight)
             {
-                characterPhysicsComponent.Velocity = new Vector2(WalkSpeed, 0);
+                characterPhysicsComponent.Velocity = initialVelocity.WithX(WalkSpeed);
             }
 
             _isWalkLeft = false;

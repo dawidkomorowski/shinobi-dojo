@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Geisha.Common.Math;
 using Geisha.Engine.Core;
 using Geisha.Engine.Core.SceneModel;
 using Geisha.Engine.Core.Systems;
