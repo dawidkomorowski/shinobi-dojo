@@ -21,17 +21,20 @@ namespace ShinobiDojo.Character
 
         internal void Process(CharacterPhysicsComponent characterPhysicsComponent)
         {
-            var initialVelocity = characterPhysicsComponent.Velocity;
-            characterPhysicsComponent.Velocity = initialVelocity.WithX(0);
-
-            if (_isWalkLeft)
+            if (characterPhysicsComponent.StandingOnTheGround)
             {
-                characterPhysicsComponent.Velocity = initialVelocity.WithX(-WalkSpeed);
-            }
+                var initialVelocity = characterPhysicsComponent.Velocity;
+                characterPhysicsComponent.Velocity = initialVelocity.WithX(0);
 
-            if (_isWalkRight)
-            {
-                characterPhysicsComponent.Velocity = initialVelocity.WithX(WalkSpeed);
+                if (_isWalkLeft)
+                {
+                    characterPhysicsComponent.Velocity = initialVelocity.WithX(-WalkSpeed);
+                }
+
+                if (_isWalkRight)
+                {
+                    characterPhysicsComponent.Velocity = initialVelocity.WithX(WalkSpeed);
+                }
             }
 
             _isWalkLeft = false;

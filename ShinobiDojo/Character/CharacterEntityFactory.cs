@@ -2,6 +2,7 @@
 using Geisha.Engine.Core.Components;
 using Geisha.Engine.Core.SceneModel;
 using Geisha.Engine.Input.Components;
+using Geisha.Engine.Physics.Components;
 using Geisha.Engine.Rendering.Components;
 
 namespace ShinobiDojo.Character
@@ -22,13 +23,25 @@ namespace ShinobiDojo.Character
         {
             var characterEntity = new Entity();
 
-            characterEntity.AddComponent(Transform2DComponent.CreateDefault());
+            characterEntity.AddComponent(new Transform2DComponent
+            {
+                Translation = new Vector2(0, 500),
+                Rotation = 0,
+                Scale = Vector2.One
+            });
+
+            var dimension = new Vector2(128, 256);
             characterEntity.AddComponent(new RectangleRendererComponent
             {
                 Color = Color.FromArgb(255, 255, 255, 0),
-                Dimension = new Vector2(128, 256),
+                Dimension = dimension,
                 FillInterior = true
             });
+            characterEntity.AddComponent(new RectangleColliderComponent
+            {
+                Dimension = dimension
+            });
+
             characterEntity.AddComponent(new CharacterPhysicsComponent());
             characterEntity.AddComponent(new CharacterControllerComponent());
 
