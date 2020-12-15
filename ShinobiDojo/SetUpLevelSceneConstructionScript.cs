@@ -22,8 +22,10 @@ namespace ShinobiDojo
             scene.AddEntity(rightBorderEntity);
 
             var characterEntityFactory = new CharacterEntityFactory();
-            var characterEntity = characterEntityFactory.CreatePlayerCharacter();
-            scene.AddEntity(characterEntity);
+            var playerCharacterEntity = characterEntityFactory.CreatePlayerCharacter(300);
+            scene.AddEntity(playerCharacterEntity);
+            var aiCharacterEntity = characterEntityFactory.CreateAiCharacter(-300);
+            scene.AddEntity(aiCharacterEntity);
         }
 
         public string Name => "SetUpLevel";

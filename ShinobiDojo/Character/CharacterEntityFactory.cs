@@ -9,9 +9,9 @@ namespace ShinobiDojo.Character
 {
     internal sealed class CharacterEntityFactory
     {
-        public Entity CreatePlayerCharacter()
+        public Entity CreatePlayerCharacter(double xPos)
         {
-            var characterEntity = CreateCharacter();
+            var characterEntity = CreateCharacter(xPos, Color.FromArgb(255, 255, 255, 0));
 
             characterEntity.AddComponent(new InputComponent());
             characterEntity.AddComponent(new PlayerCharacterControllerComponent());
@@ -19,13 +19,20 @@ namespace ShinobiDojo.Character
             return characterEntity;
         }
 
-        private Entity CreateCharacter()
+        public Entity CreateAiCharacter(double xPos)
+        {
+            var characterEntity = CreateCharacter(xPos, Color.FromArgb(255, 127, 127, 127));
+
+            return characterEntity;
+        }
+
+        private static Entity CreateCharacter(double xPos, Color color)
         {
             var characterEntity = new Entity();
 
             characterEntity.AddComponent(new Transform2DComponent
             {
-                Translation = new Vector2(0, 500),
+                Translation = new Vector2(xPos, 500),
                 Rotation = 0,
                 Scale = Vector2.One
             });
@@ -33,7 +40,7 @@ namespace ShinobiDojo.Character
             var dimension = new Vector2(128, 256);
             characterEntity.AddComponent(new RectangleRendererComponent
             {
-                Color = Color.FromArgb(255, 255, 255, 0),
+                Color = color,
                 Dimension = dimension,
                 FillInterior = true
             });
