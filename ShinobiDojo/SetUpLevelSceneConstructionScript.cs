@@ -15,6 +15,12 @@ namespace ShinobiDojo
             var groundEntity = groundEntityFactory.CreateGround();
             scene.AddEntity(groundEntity);
 
+            var borderEntityFactory = new BorderEntityFactory();
+            var leftBorderEntity = borderEntityFactory.CreateLeftBorder();
+            scene.AddEntity(leftBorderEntity);
+            var rightBorderEntity = borderEntityFactory.CreateRightBorder();
+            scene.AddEntity(rightBorderEntity);
+
             var characterEntityFactory = new CharacterEntityFactory();
             var characterEntity = characterEntityFactory.CreatePlayerCharacter();
             scene.AddEntity(characterEntity);
