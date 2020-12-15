@@ -28,6 +28,7 @@ namespace ShinobiDojo.Character
                 ApplyGravity(characterPhysics);
                 var translationDelta = ComputeTranslationDelta(characterPhysics);
                 translationDelta = ResolveCollisionWithGround(collider, characterPhysics, translationDelta);
+                translationDelta = ResolveCollisionWithBorders(collider, characterPhysics, translationDelta);
                 UpdatePosition(transform, translationDelta);
             }
         }
@@ -54,7 +55,7 @@ namespace ShinobiDojo.Character
         {
             if (characterPhysics.StandingOnTheGround)
             {
-                if (CharacterIsCollidingWithGround(collider) == false)
+                if (CharacterIsCollidingWithEntity(collider, EntityName.Ground) == false)
                 {
                     characterPhysics.StandingOnTheGround = false;
                 }
@@ -62,11 +63,29 @@ namespace ShinobiDojo.Character
                 return translationDelta;
             }
 
-            if (CharacterIsCollidingWithGround(collider))
+            if (CharacterIsCollidingWithEntity(collider, EntityName.Ground))
             {
                 characterPhysics.StandingOnTheGround = true;
                 characterPhysics.Velocity = characterPhysics.Velocity.WithY(0);
                 return translationDelta.WithY(0);
+            }
+
+            return translationDelta;
+        }
+
+        private static Vector2 ResolveCollisionWithBorders(RectangleColliderComponent collider, CharacterPhysicsComponent characterPhysics,
+            Vector2 translationDelta)
+        {
+            if (CharacterIsCollidingWithEntity(collider, EntityName.LeftBorder) && translationDelta.X < 0)
+            {
+                characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                return translationDelta.WithX(0);
+            }
+
+            if (CharacterIsCollidingWithEntity(collider, EntityName.RightBorder) && translationDelta.X > 0)
+            {
+                characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                return translationDelta.WithX(0);
             }
 
             return translationDelta;
@@ -77,9 +96,9 @@ namespace ShinobiDojo.Character
             transform.Translation += translationDelta;
         }
 
-        private static bool CharacterIsCollidingWithGround(RectangleColliderComponent collider)
+        private static bool CharacterIsCollidingWithEntity(RectangleColliderComponent collider, string entityName)
         {
-            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.Ground);
+            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == entityName);
         }
     }
 }
