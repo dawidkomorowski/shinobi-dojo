@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Geisha.Common.Math;
 using Geisha.Engine.Core;
 using Geisha.Engine.Core.Components;
@@ -29,6 +30,7 @@ namespace ShinobiDojo.Character
                 var translationDelta = ComputeTranslationDelta(characterPhysics);
                 translationDelta = ResolveCollisionWithGround(collider, characterPhysics, translationDelta);
                 translationDelta = ResolveCollisionWithBorders(collider, characterPhysics, translationDelta);
+                translationDelta = ResolveCollisionWithOtherCharacter(transform, collider, characterPhysics, translationDelta);
                 UpdatePosition(transform, translationDelta);
             }
         }
@@ -55,7 +57,7 @@ namespace ShinobiDojo.Character
         {
             if (characterPhysics.StandingOnTheGround)
             {
-                if (CharacterIsCollidingWithEntity(collider, EntityName.Ground) == false)
+                if (CharacterIsCollidingWithGround(collider) == false)
                 {
                     characterPhysics.StandingOnTheGround = false;
                 }
@@ -63,7 +65,7 @@ namespace ShinobiDojo.Character
                 return translationDelta;
             }
 
-            if (CharacterIsCollidingWithEntity(collider, EntityName.Ground))
+            if (CharacterIsCollidingWithGround(collider))
             {
                 characterPhysics.StandingOnTheGround = true;
                 characterPhysics.Velocity = characterPhysics.Velocity.WithY(0);
@@ -76,16 +78,41 @@ namespace ShinobiDojo.Character
         private static Vector2 ResolveCollisionWithBorders(RectangleColliderComponent collider, CharacterPhysicsComponent characterPhysics,
             Vector2 translationDelta)
         {
-            if (CharacterIsCollidingWithEntity(collider, EntityName.LeftBorder) && translationDelta.X < 0)
+            if (CharacterIsCollidingWithLeftBorder(collider) && translationDelta.X < 0)
             {
                 characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
                 return translationDelta.WithX(0);
             }
 
-            if (CharacterIsCollidingWithEntity(collider, EntityName.RightBorder) && translationDelta.X > 0)
+            if (CharacterIsCollidingWithRightBorder(collider) && translationDelta.X > 0)
             {
                 characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
                 return translationDelta.WithX(0);
+            }
+
+            return translationDelta;
+        }
+
+        private static Vector2 ResolveCollisionWithOtherCharacter(Transform2DComponent transform, RectangleColliderComponent collider,
+            CharacterPhysicsComponent characterPhysics, Vector2 translationDelta)
+        {
+            if (CharacterIsCollidingWithOtherCharacter(collider, out var otherCharacterEntity))
+            {
+                var otherTransform = otherCharacterEntity.GetComponent<Transform2DComponent>();
+
+                var otherCharacterIsOnTheLeft = transform.Translation.X > otherTransform.Translation.X;
+                if (otherCharacterIsOnTheLeft && translationDelta.X < 0)
+                {
+                    characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                    return translationDelta.WithX(0);
+                }
+
+                var otherCharacterIsOnTheRight = transform.Translation.X < otherTransform.Translation.X;
+                if (otherCharacterIsOnTheRight && translationDelta.X > 0)
+                {
+                    characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                    return translationDelta.WithX(0);
+                }
             }
 
             return translationDelta;
@@ -96,9 +123,34 @@ namespace ShinobiDojo.Character
             transform.Translation += translationDelta;
         }
 
-        private static bool CharacterIsCollidingWithEntity(RectangleColliderComponent collider, string entityName)
+        private static bool CharacterIsCollidingWithGround(RectangleColliderComponent collider)
         {
-            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == entityName);
+            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.Ground);
+        }
+
+        private static bool CharacterIsCollidingWithLeftBorder(RectangleColliderComponent collider)
+        {
+            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.LeftBorder);
+        }
+
+        private static bool CharacterIsCollidingWithRightBorder(RectangleColliderComponent collider)
+        {
+            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.RightBorder);
+        }
+
+        private static bool CharacterIsCollidingWithOtherCharacter(RectangleColliderComponent collider, [MaybeNullWhen(false)] out Entity otherCharacterEntity)
+        {
+            otherCharacterEntity = default;
+
+            if (collider.IsColliding && collider.CollidingEntities.Any(e => e.HasComponent<CharacterPhysicsComponent>()))
+            {
+                otherCharacterEntity = collider.CollidingEntities.Single(e => e.HasComponent<CharacterPhysicsComponent>());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
