@@ -11,7 +11,7 @@ namespace ShinobiDojo.Character
 {
     internal sealed class CharacterPhysicsSystem : ICustomSystem
     {
-        private const double GravitationalAcceleration = 2000;
+        private const double GravitationalAcceleration = 5000;
 
         public string Name => "ShinobiDojo.CharacterPhysicsSystem";
 
@@ -28,7 +28,7 @@ namespace ShinobiDojo.Character
 
                 ApplyGravity(characterPhysics);
                 var translationDelta = ComputeTranslationDelta(characterPhysics);
-                translationDelta = ResolveCollisionWithGround(collider, characterPhysics, translationDelta);
+                translationDelta = ResolveCollisionWithGround(transform, collider, characterPhysics, translationDelta);
                 translationDelta = ResolveCollisionWithBorders(collider, characterPhysics, translationDelta);
                 translationDelta = ResolveCollisionWithOtherCharacter(transform, collider, characterPhysics, translationDelta);
                 UpdatePosition(transform, translationDelta);
@@ -43,7 +43,7 @@ namespace ShinobiDojo.Character
         {
             if (characterPhysics.StandingOnTheGround == false)
             {
-                characterPhysics.Velocity += new Vector2(0, -GravitationalAcceleration * GameTime.FixedDeltaTime.TotalSeconds);
+                characterPhysics.Velocity += new Vector2(0, -GravitationalAcceleration) * GameTime.FixedDeltaTime.TotalSeconds;
             }
         }
 
@@ -52,12 +52,13 @@ namespace ShinobiDojo.Character
             return characterPhysics.Velocity * GameTime.FixedDeltaTime.TotalSeconds;
         }
 
-        private static Vector2 ResolveCollisionWithGround(RectangleColliderComponent collider, CharacterPhysicsComponent characterPhysics,
+        private static Vector2 ResolveCollisionWithGround(Transform2DComponent transform, RectangleColliderComponent collider,
+            CharacterPhysicsComponent characterPhysics,
             Vector2 translationDelta)
         {
             if (characterPhysics.StandingOnTheGround)
             {
-                if (CharacterIsCollidingWithGround(collider) == false)
+                if (CharacterIsCollidingWithGround(collider, out _) == false)
                 {
                     characterPhysics.StandingOnTheGround = false;
                 }
@@ -65,14 +66,35 @@ namespace ShinobiDojo.Character
                 return translationDelta;
             }
 
-            if (CharacterIsCollidingWithGround(collider))
+            if (CharacterIsCollidingWithGround(collider, out var groundEntity))
             {
                 characterPhysics.StandingOnTheGround = true;
                 characterPhysics.Velocity = characterPhysics.Velocity.WithY(0);
-                return translationDelta.WithY(0);
+
+                var collisionResolutionTranslation = ComputeCharacterToGroundPenetrationFixingDistance(transform, collider, groundEntity);
+
+                return translationDelta.WithY(collisionResolutionTranslation);
             }
 
             return translationDelta;
+        }
+
+        private static double ComputeCharacterToGroundPenetrationFixingDistance(Transform2DComponent transform, RectangleColliderComponent collider,
+            Entity groundEntity)
+        {
+            var groundTransform = groundEntity.GetComponent<Transform2DComponent>();
+            var groundCollider = groundEntity.GetComponent<RectangleColliderComponent>();
+
+            var centersDistance = transform.Translation.Y - groundTransform.Translation.Y;
+            var minimalNotCollidingCentersDistance = collider.Dimension.Y * 0.5 + groundCollider.Dimension.Y * 0.5;
+            var collisionResolutionTranslation = minimalNotCollidingCentersDistance - centersDistance;
+
+            if (collisionResolutionTranslation < 0)
+            {
+                collisionResolutionTranslation = 0;
+            }
+
+            return collisionResolutionTranslation;
         }
 
         private static Vector2 ResolveCollisionWithBorders(RectangleColliderComponent collider, CharacterPhysicsComponent characterPhysics,
@@ -123,9 +145,19 @@ namespace ShinobiDojo.Character
             transform.Translation += translationDelta;
         }
 
-        private static bool CharacterIsCollidingWithGround(RectangleColliderComponent collider)
+        private static bool CharacterIsCollidingWithGround(RectangleColliderComponent collider, [MaybeNullWhen(false)] out Entity groundEntity)
         {
-            return collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.Ground);
+            groundEntity = default;
+
+            if (collider.IsColliding && collider.CollidingEntities.Any(e => e.Name == EntityName.Ground))
+            {
+                groundEntity = collider.CollidingEntities.Single(e => e.Name == EntityName.Ground);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private static bool CharacterIsCollidingWithLeftBorder(RectangleColliderComponent collider)
