@@ -23,6 +23,8 @@ namespace ShinobiDojo.Character
         {
             var characterEntity = CreateCharacter(xPos, Color.FromArgb(255, 127, 127, 127));
 
+            characterEntity.AddComponent(new AiCharacterControllerComponent());
+
             return characterEntity;
         }
 
