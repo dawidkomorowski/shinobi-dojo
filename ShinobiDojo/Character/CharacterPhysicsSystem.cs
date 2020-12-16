@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Geisha.Common.Math;
 using Geisha.Engine.Core;
@@ -71,9 +72,9 @@ namespace ShinobiDojo.Character
                 characterPhysics.StandingOnTheGround = true;
                 characterPhysics.Velocity = characterPhysics.Velocity.WithY(0);
 
-                var collisionResolutionTranslation = ComputeCharacterToGroundPenetrationFixingDistance(transform, collider, groundEntity);
+                var penetrationFixingDistance = ComputeCharacterToGroundPenetrationFixingDistance(transform, collider, groundEntity);
 
-                return translationDelta.WithY(collisionResolutionTranslation);
+                return translationDelta.WithY(penetrationFixingDistance);
             }
 
             return translationDelta;
@@ -87,14 +88,14 @@ namespace ShinobiDojo.Character
 
             var centersDistance = transform.Translation.Y - groundTransform.Translation.Y;
             var minimalNotCollidingCentersDistance = collider.Dimension.Y * 0.5 + groundCollider.Dimension.Y * 0.5;
-            var collisionResolutionTranslation = minimalNotCollidingCentersDistance - centersDistance;
+            var penetrationFixingDistance = minimalNotCollidingCentersDistance - centersDistance;
 
-            if (collisionResolutionTranslation < 0)
+            if (penetrationFixingDistance < 0)
             {
-                collisionResolutionTranslation = 0;
+                penetrationFixingDistance = 0;
             }
 
-            return collisionResolutionTranslation;
+            return penetrationFixingDistance;
         }
 
         private static Vector2 ResolveCollisionWithBorders(RectangleColliderComponent collider, CharacterPhysicsComponent characterPhysics,
@@ -121,23 +122,44 @@ namespace ShinobiDojo.Character
             if (CharacterIsCollidingWithOtherCharacter(collider, out var otherCharacterEntity))
             {
                 var otherTransform = otherCharacterEntity.GetComponent<Transform2DComponent>();
+                var penetrationFixingDistance = ComputeRightCharacterToLeftCharacterPenetrationFixingDistance(transform, collider, otherCharacterEntity);
 
                 var otherCharacterIsOnTheLeft = transform.Translation.X > otherTransform.Translation.X;
-                if (otherCharacterIsOnTheLeft && translationDelta.X < 0)
+                if (otherCharacterIsOnTheLeft)
                 {
-                    characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
-                    return translationDelta.WithX(0);
+                    //characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                    return translationDelta.WithX(penetrationFixingDistance);
                 }
 
                 var otherCharacterIsOnTheRight = transform.Translation.X < otherTransform.Translation.X;
-                if (otherCharacterIsOnTheRight && translationDelta.X > 0)
+                if (otherCharacterIsOnTheRight)
                 {
-                    characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
-                    return translationDelta.WithX(0);
+                    //characterPhysics.Velocity = characterPhysics.Velocity.WithX(0);
+                    return translationDelta.WithX(-penetrationFixingDistance);
                 }
             }
 
             return translationDelta;
+        }
+
+        private static double ComputeRightCharacterToLeftCharacterPenetrationFixingDistance(Transform2DComponent transform, RectangleColliderComponent collider,
+            Entity otherCharacterEntity)
+        {
+            const double penetrationTolerance = 1;
+
+            var otherTransform = otherCharacterEntity.GetComponent<Transform2DComponent>();
+            var otherCollider = otherCharacterEntity.GetComponent<RectangleColliderComponent>();
+
+            var centersDistance = Math.Abs(transform.Translation.X - otherTransform.Translation.X);
+            var minimalNotCollidingCentersDistance = collider.Dimension.X * 0.5 + otherCollider.Dimension.X * 0.5;
+            var penetrationFixingDistance = minimalNotCollidingCentersDistance - centersDistance;
+
+            if (penetrationFixingDistance < penetrationTolerance)
+            {
+                penetrationFixingDistance = penetrationTolerance;
+            }
+
+            return penetrationFixingDistance;
         }
 
         private static void UpdatePosition(Transform2DComponent transform, Vector2 translationDelta)

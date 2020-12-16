@@ -5,7 +5,7 @@ namespace ShinobiDojo.Character
 {
     internal sealed class CharacterControllerComponent : IComponent
     {
-        private const double WalkSpeed = 400;
+        private const double WalkSpeed = 600;
         private const double JumpSpeed = 1900;
 
         private bool _isWalkLeft;
