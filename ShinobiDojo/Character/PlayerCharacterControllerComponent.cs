@@ -28,6 +28,11 @@ namespace ShinobiDojo.Character
             {
                 _characterControllerComponent.WalkRight();
             }
+
+            if (_inputComponent.HardwareInput.KeyboardInput.Up)
+            {
+                _characterControllerComponent.Jump();
+            }
         }
     }
 }

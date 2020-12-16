@@ -1,13 +1,17 @@
-﻿using Geisha.Engine.Core.SceneModel;
+﻿using Geisha.Common.Math;
+using Geisha.Engine.Core.SceneModel;
 
 namespace ShinobiDojo.Character
 {
     internal sealed class CharacterControllerComponent : IComponent
     {
-        private const int WalkSpeed = 100;
+        private const double WalkSpeed = 400;
+        private const double JumpSpeed = 1200;
 
         private bool _isWalkLeft;
         private bool _isWalkRight;
+        private bool _isJump;
+        private bool _readyForJump;
 
         public void WalkLeft()
         {
@@ -17,6 +21,11 @@ namespace ShinobiDojo.Character
         public void WalkRight()
         {
             _isWalkRight = true;
+        }
+
+        public void Jump()
+        {
+            _isJump = true;
         }
 
         internal void Process(CharacterPhysicsComponent characterPhysicsComponent)
@@ -35,10 +44,21 @@ namespace ShinobiDojo.Character
                 {
                     characterPhysicsComponent.Velocity = initialVelocity.WithX(WalkSpeed);
                 }
+
+                if (_readyForJump && _isJump)
+                {
+                    _readyForJump = false;
+                    characterPhysicsComponent.Velocity += new Vector2(0, JumpSpeed);
+                }
+            }
+            else
+            {
+                _readyForJump = true;
             }
 
             _isWalkLeft = false;
             _isWalkRight = false;
+            _isJump = false;
         }
     }
 }
