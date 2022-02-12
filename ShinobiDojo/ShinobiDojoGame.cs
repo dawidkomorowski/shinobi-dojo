@@ -16,9 +16,9 @@ namespace ShinobiDojo
         }
 
         public string WindowTitle =>
-            $"ShinobiDojo {Assembly.GetAssembly(typeof(ShinobiDojoGame))?.GetName().Version} ({EngineInformation})";
+            $"ShinobiDojo {Assembly.GetAssembly(typeof(ShinobiDojoGame))?.GetName().Version?.ToString(2)} ({EngineInformation})";
 
         private static string EngineInformation =>
-            $"Geisha Engine {Assembly.GetAssembly(typeof(IGame))?.GetName().Version}";
+            $"Geisha Engine {Assembly.GetAssembly(typeof(IGame))?.GetName().Version?.ToString(3)}";
     }
 }
