@@ -1,9 +1,9 @@
-﻿using Geisha.Common.Math;
+﻿using Geisha.Engine.Core.Math;
 using Geisha.Engine.Core.SceneModel;
 
 namespace ShinobiDojo.Character
 {
-    internal sealed class CharacterControllerComponent : IComponent
+    internal sealed class CharacterControllerComponent : Component
     {
         private const double WalkSpeed = 600;
         private const double JumpSpeed = 1900;
@@ -12,6 +12,10 @@ namespace ShinobiDojo.Character
         private bool _isWalkRight;
         private bool _isJump;
         private bool _readyForJump;
+
+        public CharacterControllerComponent(Entity entity) : base(entity)
+        {
+        }
 
         public void WalkLeft()
         {
@@ -60,5 +64,10 @@ namespace ShinobiDojo.Character
             _isWalkRight = false;
             _isJump = false;
         }
+    }
+
+    internal sealed class CharacterControllerComponentFactory : ComponentFactory<CharacterControllerComponent>
+    {
+        protected override CharacterControllerComponent CreateComponent(Entity entity) => new(entity);
     }
 }

@@ -361,5 +361,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Not ignore Geisha Engine nuget packages
-!geisha-engine-packages/*.nupkg
+# Not ignore Geisha SDK nuget packages
+!GeishaSDK.0.8.0/**/*.nupkg

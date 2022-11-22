@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Geisha.Common.Math;
+using Geisha.Engine.Core.Math;
 using Geisha.Engine.Core;
 using Geisha.Engine.Core.Components;
 using Geisha.Engine.Core.SceneModel;
@@ -13,10 +13,49 @@ namespace ShinobiDojo.Character
     internal sealed class CharacterPhysicsSystem : ICustomSystem
     {
         private const double GravitationalAcceleration = 5000;
+        private Scene? _scene;
+
+        #region ICustomSystem implementation
 
         public string Name => "ShinobiDojo.CharacterPhysicsSystem";
 
-        public void ProcessFixedUpdate(Scene scene)
+        public void ProcessFixedUpdate()
+        {
+            // TODO This is naive implementation to quickly migrate code from Geisha Engine 0.5 to Geisha Engine 0.8
+            if (_scene is not null)
+            {
+                InternalProcessFixedUpdate(_scene);
+            }
+        }
+
+        public void ProcessUpdate(GameTime gameTime)
+        {
+        }
+
+        public void OnEntityCreated(Entity entity)
+        {
+            _scene = entity.Scene;
+        }
+
+        public void OnEntityRemoved(Entity entity)
+        {
+        }
+
+        public void OnEntityParentChanged(Entity entity, Entity? oldParent, Entity? newParent)
+        {
+        }
+
+        public void OnComponentCreated(Component component)
+        {
+        }
+
+        public void OnComponentRemoved(Component component)
+        {
+        }
+
+        #endregion
+
+        private void InternalProcessFixedUpdate(Scene scene)
         {
             var entities = scene.RootEntities.Where(e =>
                 e.HasComponent<Transform2DComponent>() && e.HasComponent<CharacterPhysicsComponent>()).ToList();
@@ -34,10 +73,6 @@ namespace ShinobiDojo.Character
                 translationDelta = ResolveCollisionWithOtherCharacter(transform, collider, characterPhysics, translationDelta);
                 UpdatePosition(transform, translationDelta);
             }
-        }
-
-        public void ProcessUpdate(Scene scene, GameTime gameTime)
-        {
         }
 
         private static void ApplyGravity(CharacterPhysicsComponent characterPhysics)
@@ -87,7 +122,7 @@ namespace ShinobiDojo.Character
             var groundCollider = groundEntity.GetComponent<RectangleColliderComponent>();
 
             var centersDistance = transform.Translation.Y - groundTransform.Translation.Y;
-            var minimalNotCollidingCentersDistance = collider.Dimension.Y * 0.5 + groundCollider.Dimension.Y * 0.5;
+            var minimalNotCollidingCentersDistance = collider.Dimensions.Y * 0.5 + groundCollider.Dimensions.Y * 0.5;
             var penetrationFixingDistance = minimalNotCollidingCentersDistance - centersDistance;
 
             if (penetrationFixingDistance < 0)
@@ -151,7 +186,7 @@ namespace ShinobiDojo.Character
             var otherCollider = otherCharacterEntity.GetComponent<RectangleColliderComponent>();
 
             var centersDistance = Math.Abs(transform.Translation.X - otherTransform.Translation.X);
-            var minimalNotCollidingCentersDistance = collider.Dimension.X * 0.5 + otherCollider.Dimension.X * 0.5;
+            var minimalNotCollidingCentersDistance = collider.Dimensions.X * 0.5 + otherCollider.Dimensions.X * 0.5;
             var penetrationFixingDistance = minimalNotCollidingCentersDistance - centersDistance;
 
             if (penetrationFixingDistance < penetrationTolerance)

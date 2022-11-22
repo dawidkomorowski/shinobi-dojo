@@ -11,7 +11,7 @@ namespace ShinobiDojo
         [STAThread]
         private static void Main()
         {
-            GeishaEngineForWindows.Run(new ShinobiDojoGame());
+            WindowsApplication.Run(new ShinobiDojoGame());
         }
     }
 }

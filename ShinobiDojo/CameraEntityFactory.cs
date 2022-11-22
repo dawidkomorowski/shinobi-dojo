@@ -1,23 +1,19 @@
-﻿using Geisha.Common.Math;
-using Geisha.Engine.Core.Components;
+﻿using Geisha.Engine.Core.Components;
+using Geisha.Engine.Core.Math;
 using Geisha.Engine.Core.SceneModel;
 using Geisha.Engine.Rendering.Components;
 
 namespace ShinobiDojo
 {
-    internal sealed class CameraEntityFactory
+    internal static class CameraEntityFactory
     {
-        public Entity CreateCamera()
+        public static void CreateCamera(Scene scene)
         {
-            var cameraEntity = new Entity();
+            var cameraEntity = scene.CreateEntity();
 
-            cameraEntity.AddComponent(Transform2DComponent.CreateDefault());
-            cameraEntity.AddComponent(new CameraComponent
-            {
-                ViewRectangle = new Vector2(1280, 720)
-            });
-
-            return cameraEntity;
+            cameraEntity.CreateComponent<Transform2DComponent>();
+            var camera = cameraEntity.CreateComponent<CameraComponent>();
+            camera.ViewRectangle = new Vector2(1280, 720);
         }
     }
 }

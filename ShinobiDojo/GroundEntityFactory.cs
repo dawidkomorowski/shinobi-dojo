@@ -1,4 +1,4 @@
-﻿using Geisha.Common.Math;
+﻿using Geisha.Engine.Core.Math;
 using Geisha.Engine.Core.Components;
 using Geisha.Engine.Core.SceneModel;
 using Geisha.Engine.Physics.Components;
@@ -6,32 +6,26 @@ using Geisha.Engine.Rendering.Components;
 
 namespace ShinobiDojo
 {
-    internal sealed class GroundEntityFactory
+    internal static class GroundEntityFactory
     {
-        public Entity CreateGround()
+        public static void CreateGround(Scene scene)
         {
-            var groundEntity = new Entity {Name = EntityName.Ground};
+            var groundEntity = scene.CreateEntity();
+            groundEntity.Name = EntityName.Ground;
 
-            groundEntity.AddComponent(new Transform2DComponent
-            {
-                Translation = new Vector2(0, -300),
-                Rotation = 0,
-                Scale = Vector2.One
-            });
+            var transform = groundEntity.CreateComponent<Transform2DComponent>();
+            transform.Translation = new Vector2(0, -300);
+            transform.Rotation = 0;
+            transform.Scale = Vector2.One;
 
-            var dimension = new Vector2(1280, 50);
-            groundEntity.AddComponent(new RectangleRendererComponent
-            {
-                Color = Color.FromArgb(255, 0, 0, 255),
-                Dimension = dimension,
-                FillInterior = true
-            });
-            groundEntity.AddComponent(new RectangleColliderComponent
-            {
-                Dimension = dimension
-            });
+            var dimensions = new Vector2(1280, 50);
+            var rectangleRenderer = groundEntity.CreateComponent<RectangleRendererComponent>();
+            rectangleRenderer.Color = Color.FromArgb(255, 0, 0, 255);
+            rectangleRenderer.Dimension = dimensions;
+            rectangleRenderer.FillInterior = true;
 
-            return groundEntity;
+            var rectangleCollider = groundEntity.CreateComponent<RectangleColliderComponent>();
+            rectangleCollider.Dimensions = dimensions;
         }
     }
 }

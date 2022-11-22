@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Geisha.Engine.Core.Components;
+using Geisha.Engine.Core.SceneModel;
 using Geisha.Engine.Input.Components;
 
 namespace ShinobiDojo.Character
@@ -8,6 +9,10 @@ namespace ShinobiDojo.Character
     {
         private InputComponent _inputComponent = null!;
         private CharacterControllerComponent _characterControllerComponent = null!;
+
+        public PlayerCharacterControllerComponent(Entity entity) : base(entity)
+        {
+        }
 
         public override void OnStart()
         {
@@ -34,5 +39,10 @@ namespace ShinobiDojo.Character
                 _characterControllerComponent.Jump();
             }
         }
+    }
+
+    internal sealed class PlayerCharacterControllerComponentFactory : ComponentFactory<PlayerCharacterControllerComponent>
+    {
+        protected override PlayerCharacterControllerComponent CreateComponent(Entity entity) => new(entity);
     }
 }

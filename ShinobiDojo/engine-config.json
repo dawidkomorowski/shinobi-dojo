@@ -1,20 +1,24 @@
 ﻿{
+  "Audio": {
+    "EnableSound": true
+  },
   "Core": {
     "AssetsRootDirectoryPath": "Assets",
-    "CustomSystemsExecutionOrder": [
+    "CustomGameLoopSteps": [
       "ShinobiDojo.CharacterControllerSystem",
       "ShinobiDojo.CharacterPhysicsSystem"
     ],
     "FixedUpdatesPerFrameLimit": 30,
     "FixedUpdatesPerSecond": 60,
+    "LogLevel": "Debug",
     "ShowAllEntitiesCount": true,
     "ShowRootEntitiesCount": true,
     "ShowFps": true,
     "ShowFrameTime": true,
+    "ShowGameLoopStatistics": true,
     "ShowTotalFrames": true,
     "ShowTotalTime": true,
-    "ShowSystemsExecutionTimes": true,
-    "StartUpScene": "Assets\\Level\\Empty.scene"
+    "StartUpSceneBehavior": "Main"
   },
   "Physics": {
     "RenderCollisionGeometry": true
